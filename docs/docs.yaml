@@ -1,0 +1,136 @@
+swagger: '2.0'
+info:
+  description: 'This documentation is a specification needed to be accessed by a complete API that supports processing passenger transportation data.'
+  version: 1.0.0
+  title: OpenAPI
+host: localhost:8010
+basePath: /
+tags:
+  - name: rides
+schemes:
+  - http
+paths:
+  /rides:
+    post:
+      tags:
+        - rides
+      summary: Create new rides
+      description: Use this endpoint to create new rides
+      operationId: CreateRides
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: Rides object that needs to be created
+          required: true
+          schema:
+            $ref: '#/definitions/Ride'
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/RideResponse'
+    get:
+      tags:
+        - rides
+      summary: Show all rides
+      description: 'Returns an array of rides objects. Use this endpoint to get all rides.'
+      operationId: GetRides
+      produces:
+        - application/xml
+        - application/json
+      responses:
+        '200':
+          description: Success
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/RideResponse'
+  '/rides/{id}':
+    get:
+      tags:
+        - rides
+      summary: Get Rides by ID
+      description: 'Returns a single Rides. Use this endpoint to get rides detail'
+      operationId: GetRidesDetail
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          description: ID of rides to return
+          required: true
+          type: integer
+      responses:
+        '200':
+          description: success
+          schema:
+            $ref: '#/definitions/RideResponse'
+definitions:
+  Ride:
+    title: Ride
+    type: object
+    required:
+      - start_lat
+      - start_long
+      - end_lat
+      - end_long
+      - rider_name
+      - driver_name
+      - driver_vehicle
+    properties:
+      start_lat:
+        type: number
+        example: -7.245461
+      start_long:
+        type: number
+        example: 7.245461
+      end_lat:
+        type: number
+        example: -7.245461
+      end_long:
+        type: number
+        example: 7.245461
+      rider_name:
+        type: string
+      driver_name:
+        type: string
+      driver_vehicle:
+        type: string
+    xml:
+      name: Ride
+  RideResponse:
+    title: RideResponse
+    type: object
+    properties:
+      rideID:
+        type: integer
+      startLat:
+        type: number
+        example: -7.245461
+      startLong:
+        type: number
+        example: 7.245461
+      endLat:
+        type: number
+        example: -7.245461
+      endLong:
+        type: number
+        example: 7.245461
+      riderName:
+        type: string
+      driverName:
+        type: string
+      driverVehicle:
+        type: string
+      created:
+        type: string
+        format: date-time
+    xml:
+      name: RideResponse
