@@ -81,7 +81,20 @@ module.exports = (db) => {
     });
 
     app.get('/rides', (req, res) => {
-        db.all('SELECT * FROM Rides', function (err, rows) {
+        const page = parseInt(req.query.page);
+        const size = parseInt(req.query.size);
+
+        if (page <= 0 || size <= 0){
+            return res.send({
+                error_code: 'VALIDATION_ERROR',
+                message: 'Page or size must be greater than 0'
+            });
+        }
+
+        var offset = (page-1) * size;
+        var values = [size, offset];
+
+        db.all('SELECT * FROM Rides limit ? offset ?',values ,function (err, rows) {
             if (err) {
                 logger.error(err.message);
                 return res.send({
@@ -97,7 +110,30 @@ module.exports = (db) => {
                 });
             }
 
-            res.send(rows);
+            var count = 0;
+
+            db.all('SELECT count(*) as count FROM Rides', function (err, rowCounts) {
+                if (err) {
+                    logger.error(err.message);
+                    return res.send({
+                        error_code: 'SERVER_ERROR',
+                        message: 'Unknown error'
+                    });
+                }
+
+                count = rowCounts[0].count;
+
+                var totalPage = Math.ceil(count/size);
+                var result = {
+                    page: page,
+                    size: size,
+                    totalPage: totalPage,
+                    totalRows: count,
+                    results: rows
+                };
+
+                res.send(result);
+            });
         });
     });
 

@@ -38,19 +38,30 @@ paths:
     get:
       tags:
         - rides
-      summary: Show all rides
+      summary: Get rides
       description: 'Returns an array of rides objects. Use this endpoint to get all rides.'
       operationId: GetRides
       produces:
         - application/xml
         - application/json
+      parameters:
+        - name: page
+          in: query
+          description: page number with value > 0
+          required: true
+          type: integer
+        - name: size
+          in: query
+          description: total rows per page with value > 0
+          required: true
+          type: integer
       responses:
         '200':
           description: Success
           schema:
             type: array
             items:
-              $ref: '#/definitions/RideResponse'
+              $ref: '#/definitions/RidePaginationResponse'
   '/rides/{id}':
     get:
       tags:
@@ -134,3 +145,24 @@ definitions:
         format: date-time
     xml:
       name: RideResponse
+  RidePaginationResponse:
+    title: RidePaginationResponse
+    type: object
+    properties:
+      page:
+        type: integer
+      size:
+        type: integer
+      totalPage:
+        type: integer
+      totalRows:
+        type: integer
+      results:
+        type: array
+        xml:
+          name: ride
+          wrapped: true
+        items:
+          $ref: '#/definitions/RideResponse'
+    xml:
+      name: RidePaginationResponse
