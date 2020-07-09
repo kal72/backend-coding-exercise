@@ -876,6 +876,37 @@ ul.nav-tabs {
     "name" : "Ride"
   }
 };
+    defs["RidePaginationResponse"] = {
+  "title" : "RidePaginationResponse",
+  "type" : "object",
+  "properties" : {
+    "page" : {
+      "type" : "integer"
+    },
+    "size" : {
+      "type" : "integer"
+    },
+    "totalPage" : {
+      "type" : "integer"
+    },
+    "totalRows" : {
+      "type" : "integer"
+    },
+    "results" : {
+      "type" : "array",
+      "xml" : {
+        "name" : "ride",
+        "wrapped" : true
+      },
+      "items" : {
+        "$ref" : "#/components/schemas/RideResponse"
+      }
+    }
+  },
+  "xml" : {
+    "name" : "RidePaginationResponse"
+  }
+};
     defs["RideResponse"] = {
   "title" : "RideResponse",
   "type" : "object",
@@ -1332,7 +1363,7 @@ $(document).ready(function() {
                       <article id="api-Rides-getRides-0" data-group="User" data-name="getRides" data-version="0">
                         <div class="pull-left">
                           <h1>getRides</h1>
-                          <p>Show all rides</p>
+                          <p>Get rides</p>
                         </div>
                         <div class="pull-right"></div>
                         <div class="clearfix"></div>
@@ -1361,7 +1392,7 @@ $(document).ready(function() {
 
                         <div class="tab-content">
                           <div class="tab-pane active" id="examples-Rides-getRides-0-curl">
-                            <pre class="prettyprint"><code class="language-bsh">curl -X GET "http://localhost:8010/rides"</code></pre>
+                            <pre class="prettyprint"><code class="language-bsh">curl -X GET "http://localhost:8010/rides?page=&size="</code></pre>
                           </div>
                           <div class="tab-pane" id="examples-Rides-getRides-0-java">
                             <pre class="prettyprint"><code class="language-java">import org.openapitools.client.*;
@@ -1377,8 +1408,10 @@ public class RidesApiExample {
     public static void main(String[] args) {
         
         RidesApi apiInstance = new RidesApi();
+        Integer page = 56; // Integer | page number with value > 0
+        Integer size = 56; // Integer | total rows per page with value > 0
         try {
-            array[RideResponse] result = apiInstance.getRides();
+            array[RidePaginationResponse] result = apiInstance.getRides(page, size);
             System.out.println(result);
         } catch (ApiException e) {
             System.err.println("Exception when calling RidesApi#getRides");
@@ -1396,8 +1429,10 @@ public class RidesApiExample {
 
     public static void main(String[] args) {
         RidesApi apiInstance = new RidesApi();
+        Integer page = 56; // Integer | page number with value > 0
+        Integer size = 56; // Integer | total rows per page with value > 0
         try {
-            array[RideResponse] result = apiInstance.getRides();
+            array[RidePaginationResponse] result = apiInstance.getRides(page, size);
             System.out.println(result);
         } catch (ApiException e) {
             System.err.println("Exception when calling RidesApi#getRides");
@@ -1411,12 +1446,15 @@ public class RidesApiExample {
   <pre class="prettyprint language-json prettyprinted" data-type="json"><code>Coming Soon!</code></pre>
   </div> -->
                             <div class="tab-pane" id="examples-Rides-getRides-0-objc">
-                              <pre class="prettyprint"><code class="language-cpp">
+                              <pre class="prettyprint"><code class="language-cpp">Integer *page = 56; // page number with value > 0 (default to null)
+Integer *size = 56; // total rows per page with value > 0 (default to null)
+
 RidesApi *apiInstance = [[RidesApi alloc] init];
 
-// Show all rides
-[apiInstance getRidesWithCompletionHandler: 
-              ^(array[RideResponse] output, NSError* error) {
+// Get rides
+[apiInstance getRidesWith:page
+    size:size
+              completionHandler: ^(array[RidePaginationResponse] output, NSError* error) {
                             if (output) {
                                 NSLog(@"%@", output);
                             }
@@ -1431,6 +1469,9 @@ RidesApi *apiInstance = [[RidesApi alloc] init];
                               <pre class="prettyprint"><code class="language-js">var OpenApi = require('open_api');
 
 var api = new OpenApi.RidesApi()
+var page = 56; // {Integer} page number with value > 0
+var size = 56; // {Integer} total rows per page with value > 0
+
 var callback = function(error, data, response) {
   if (error) {
     console.error(error);
@@ -1438,7 +1479,7 @@ var callback = function(error, data, response) {
     console.log('API called successfully. Returned data: ' + data);
   }
 };
-api.getRides(callback);
+api.getRides(page, size, callback);
 </code></pre>
                             </div>
 
@@ -1460,11 +1501,13 @@ namespace Example
         {
             
             var apiInstance = new RidesApi();
+            var page = 56;  // Integer | page number with value > 0 (default to null)
+            var size = 56;  // Integer | total rows per page with value > 0 (default to null)
 
             try
             {
-                // Show all rides
-                array[RideResponse] result = apiInstance.getRides();
+                // Get rides
+                array[RidePaginationResponse] result = apiInstance.getRides(page, size);
                 Debug.WriteLine(result);
             }
             catch (Exception e)
@@ -1482,9 +1525,11 @@ namespace Example
 require_once(__DIR__ . '/vendor/autoload.php');
 
 $api_instance = new OpenAPITools\Client\Api\RidesApi();
+$page = 56; // Integer | page number with value > 0
+$size = 56; // Integer | total rows per page with value > 0
 
 try {
-    $result = $api_instance->getRides();
+    $result = $api_instance->getRides($page, $size);
     print_r($result);
 } catch (Exception $e) {
     echo 'Exception when calling RidesApi->getRides: ', $e->getMessage(), PHP_EOL;
@@ -1498,9 +1543,11 @@ use WWW::OPenAPIClient::Configuration;
 use WWW::OPenAPIClient::RidesApi;
 
 my $api_instance = WWW::OPenAPIClient::RidesApi->new();
+my $page = 56; # Integer | page number with value > 0
+my $size = 56; # Integer | total rows per page with value > 0
 
 eval { 
-    my $result = $api_instance->getRides();
+    my $result = $api_instance->getRides(page => $page, size => $size);
     print Dumper($result);
 };
 if ($@) {
@@ -1517,10 +1564,12 @@ from pprint import pprint
 
 # create an instance of the API class
 api_instance = openapi_client.RidesApi()
+page = 56 # Integer | page number with value > 0 (default to null)
+size = 56 # Integer | total rows per page with value > 0 (default to null)
 
 try: 
-    # Show all rides
-    api_response = api_instance.get_rides()
+    # Get rides
+    api_response = api_instance.get_rides(page, size)
     pprint(api_response)
 except ApiException as e:
     print("Exception when calling RidesApi->getRides: %s\n" % e)</code></pre>
@@ -1530,9 +1579,11 @@ except ApiException as e:
                               <pre class="prettyprint"><code class="language-rust">extern crate RidesApi;
 
 pub fn main() {
+    let page = 56; // Integer
+    let size = 56; // Integer
 
     let mut context = RidesApi::Context::default();
-    let result = client.getRides(&context).wait();
+    let result = client.getRides(page, size, &context).wait();
     println!("{:?}", result);
 
 }
@@ -1551,6 +1602,59 @@ pub fn main() {
 
 
 
+                            <div class="methodsubtabletitle">Query parameters</div>
+                            <table id="methodsubtable">
+                              <tr>
+                                <th width="150px">Name</th>
+                                <th>Description</th>
+                              </tr>
+                                <tr><td style="width:150px;">page*</td>
+<td>
+
+
+    <div id="d2e199_getRides_page">
+        <div class="json-schema-view">
+            <div class="primitive">
+                <span class="type">
+                    Integer
+                </span>
+
+                    <div class="inner description marked">
+page number with value &gt; 0
+                    </div>
+            </div>
+                <div class="inner required">
+                    Required
+                </div>
+        </div>
+    </div>
+</td>
+</tr>
+
+                                <tr><td style="width:150px;">size*</td>
+<td>
+
+
+    <div id="d2e199_getRides_size">
+        <div class="json-schema-view">
+            <div class="primitive">
+                <span class="type">
+                    Integer
+                </span>
+
+                    <div class="inner description marked">
+total rows per page with value &gt; 0
+                    </div>
+            </div>
+                <div class="inner required">
+                    Required
+                </div>
+        </div>
+    </div>
+</td>
+</tr>
+
+                            </table>
 
                           <h2>Responses</h2>
                             <h3 id="examples-Rides-getRides-title-200"></h3>
@@ -1590,7 +1694,7 @@ pub fn main() {
       "schema" : {
         "type" : "array",
         "items" : {
-          "$ref" : "#/components/schemas/RideResponse"
+          "$ref" : "#/components/schemas/RidePaginationResponse"
         }
       }
     },
@@ -1598,7 +1702,7 @@ pub fn main() {
       "schema" : {
         "type" : "array",
         "items" : {
-          "$ref" : "#/components/schemas/RideResponse"
+          "$ref" : "#/components/schemas/RidePaginationResponse"
         }
       }
     }

@@ -171,11 +171,43 @@ describe('API tests', () => {
     });
 
     describe('GET /rides', () => {
-        it('should has status code 200 with rides is non empty', (done) => {
+        var page = 1;
+        var size = 10;
+
+        it('should has status code 200 with rides is found', (done) => {
             request(app)
                 .get('/rides')
+                .query({page: page, size: size})
                 .expect('Content-Type', /json/)
-                .expect(200, done);
+                .expect(200)
+                .end((err, res) => {
+                    if (err) return done(err);
+
+                    assert.equal(res.body.page, page);
+                    assert.equal(res.body.size, size);
+                    assert.ok(res.body.results.length > 0)
+
+                    done();
+                });
+        });
+
+        it('should has response with error validation page or size less than 1', (done) => {
+            page = -1;
+            size = 0;
+
+            request(app)
+                .get('/rides')
+                .query({page: page, size: size})
+                .expect('Content-Type', /json/)
+                .expect(200)
+                .end((err, res) => {
+                    if (err) return done(err);
+
+                    assert.equal(res.body.error_code, 'VALIDATION_ERROR');
+                    assert.equal(res.body.message, 'Page or size must be greater than 0');
+
+                    done();
+                });
         });
     });
 
