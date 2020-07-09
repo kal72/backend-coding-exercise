@@ -10,6 +10,11 @@
     "test": "eslint src && nyc mocha tests",
     "start": "node index.js"
   },
+  "husky": {
+    "hooks": {
+      "pre-push": "npm test"
+    }
+  },
   "keywords": [
     "Xendit"
   ],
@@ -24,6 +29,7 @@
     "@typescript-eslint/eslint-plugin": "^3.6.0",
     "@typescript-eslint/parser": "^3.6.0",
     "eslint": "^7.4.0",
+    "husky": "^4.2.5",
     "mocha": "^6.1.4",
     "nyc": "^15.1.0",
     "supertest": "^4.0.2",
