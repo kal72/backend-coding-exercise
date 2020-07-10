@@ -6,18 +6,14 @@ const options = {
     file: {
         level: 'info',
         filename: './logs/app.log',
-    },
-    console: {
-        level: 'debug',
-        format: winston.format.combine(winston.format.colorize(), winston.format.simple())
-    },
+    }
 };
 
 module.exports = winston.createLogger({
     handleExceptions: true,
     exitOnError: false,
+    format: winston.format.combine(winston.format.timestamp(), winston.format.json()),
     transports: [
-        new winston.transports.Console(options.console),
         new winston.transports.File(options.file)
     ]
 });
