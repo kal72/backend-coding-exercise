@@ -6,8 +6,12 @@ jobs:
       - checkout
       - node/install:
           install-yarn: true
-          node-version: 10.15.1
+          node-version: 10.15.2
       - run: node --version
+  build-and-test:
+    steps:
+      - run: npm install
+      - run: npm test
 orbs:
   node: circleci/node@2.1.1
 version: 2.1
@@ -15,3 +19,4 @@ workflows:
   test_my_app:
     jobs:
       - install-node
+      - build-and-test
