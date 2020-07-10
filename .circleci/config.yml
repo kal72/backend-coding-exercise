@@ -1,7 +1,7 @@
 jobs:
   install-node:
     docker:
-      - image: 'cimg/base:default'
+      - image: 'cimg/base:stable'
     steps:
       - checkout
       - node/install:
