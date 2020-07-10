@@ -5,6 +5,8 @@ jobs:
     docker:
       - image: 'cimg/base:stable'
     steps:
+      - attach_workspace:
+          at: .
       - checkout
       - node/install:
           install-yarn: true
