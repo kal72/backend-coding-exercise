@@ -7,7 +7,7 @@
     "test": "tests"
   },
   "scripts": {
-    "test": "eslint src && nyc mocha tests --reporter=xunit --reporter-options output=test-results/mocha/results.xml",
+    "test": "eslint src && nyc --reporter=text mocha tests --reporter=xunit --reporter-options output=test-results/mocha/results.xml",
     "start": "node index.js"
   },
   "husky": {
