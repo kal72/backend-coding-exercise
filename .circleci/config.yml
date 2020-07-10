@@ -16,6 +16,12 @@ jobs:
       - run: npm test
       - store_test_results:
           path: test-results
+      - store_artifacts:
+          path: coverage
+          destination: coverage
+      - store_artifacts:
+          path: docs
+          destination: docs
 orbs:
   node: circleci/node@2.1.1
 # Orchestrate our job run sequence
