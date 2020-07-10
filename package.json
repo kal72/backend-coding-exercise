@@ -7,7 +7,7 @@
     "test": "tests"
   },
   "scripts": {
-    "test": "nyc --reporter=lcov mocha tests --reporter=xunit --reporter-options output=test-results/mocha/results.xml",
+    "test": "mocha tests --reporter=xunit --reporter-options output=test-results/mocha/results.xml",
     "start": "node index.js"
   },
   "husky": {
