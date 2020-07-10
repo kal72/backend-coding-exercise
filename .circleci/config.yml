@@ -1,5 +1,8 @@
+version: 2.1
+
+# Define the jobs we want to run for this project
 jobs:
-  install-node:
+  build:
     docker:
       - image: 'cimg/base:stable'
     steps:
@@ -8,15 +11,24 @@ jobs:
           install-yarn: true
           node-version: 10.15.2
       - run: node --version
-  build-and-test:
+      - run: npm install
+  test:
+    docker:
+      - image: 'cimg/base:stable'
     steps:
+      - checkout
+      - node/install:
+          install-yarn: true
+          node-version: 10.15.2
+      - run: node --version
       - run: npm install
       - run: npm test
-orbs:
-  node: circleci/node@2.1.1
-version: 2.1
+
+# Orchestrate our job run sequence
 workflows:
-  test_my_app:
+  build_and_test:
     jobs:
-      - install-node
-      - build-and-test
+      - build
+      - test:
+          requires:
+            - build
