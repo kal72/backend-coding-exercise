@@ -8,6 +8,8 @@ const app = express();
 const bodyParser = require('body-parser');
 const jsonParser = bodyParser.json();
 
+const rideService = require('./service/ride_service')
+
 module.exports = (db) => {
     app.get('/health', async (req, res) => res.send('Healthy'));
 
@@ -57,11 +59,8 @@ module.exports = (db) => {
 
         try {
             var values = [req.body.start_lat, req.body.start_long, req.body.end_lat, req.body.end_long, req.body.rider_name, req.body.driver_name, req.body.driver_vehicle];
-
-            const insertResult = await db.executeRun('INSERT INTO Rides(startLat, startLong, endLat, endLong, riderName, driverName, driverVehicle) VALUES (?, ?, ?, ?, ?, ?, ?)', values);
-            const result = await db.executeAll('SELECT * FROM Rides WHERE rideID = ?', insertResult.lastID);
-
-            res.send(result.rows);
+            const result = await rideService.storeRides(db, values)
+            res.send(result);
         } catch (err) {
             logger.error(err.message);
             res.send({
@@ -82,31 +81,9 @@ module.exports = (db) => {
             });
         }
 
-        var offset = (page-1) * size;
-        var values = [size, offset];
-
         try {
-            const result = await db.executeAll('SELECT * FROM Rides limit ? offset ?',values);
-
-            if (result.rows.length === 0) {
-                return res.send({
-                    error_code: 'RIDES_NOT_FOUND_ERROR',
-                    message: 'Could not find any rides'
-                });
-            }
-
-            const countResult = await db.executeAll('SELECT count(*) as count FROM Rides');
-
-            var count = countResult.rows[0].count;
-            var totalPage = Math.ceil(count/size);
-
-            res.send({
-                page: page,
-                size: size,
-                totalPage: totalPage,
-                totalRows: count,
-                results: result.rows
-            });
+            const result = await rideService.getRides(db, page, size);
+            res.send(result);
         } catch (err) {
             logger.error(err.message);
             res.send({
@@ -118,17 +95,9 @@ module.exports = (db) => {
 
     app.get('/rides/:id', async (req, res) => {
         try {
-            const result = await db.executeAll(`SELECT * FROM Rides WHERE rideID='${req.params.id}'`);
-
-            if (result.rows.length === 0) {
-                return res.send({
-                    error_code: 'RIDES_NOT_FOUND_ERROR',
-                    message: 'Could not find any rides'
-                });
-            }
-
-            res.send(result.rows);
-        }catch (err) {
+            const result = await rideService.getRidesByID(db, req.params.id);
+            res.send(result);
+        } catch (err) {
             logger.error(err.message);
             res.send({
                 error_code: 'SERVER_ERROR',
