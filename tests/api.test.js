@@ -8,6 +8,7 @@ const db = new sqlite3.Database(':memory:');
 
 const app = require('../src/app')(db);
 const buildSchemas = require('../src/schemas');
+const buildAsync = require('../src/lib/dbasync');
 
 const ride = {
     "start_lat": -10.8688,
@@ -27,6 +28,7 @@ describe('API tests', () => {
             }
 
             buildSchemas(db);
+            buildAsync(db)
 
             done();
         });
@@ -109,7 +111,7 @@ describe('API tests', () => {
                 });
         });
 
-        it('should has response with error validation ride_name is non empty string', (done) => {
+        it('should has response with error validation if ride_name is empty string', (done) => {
             let rideReq = Object.create(ride);
             rideReq.rider_name = ''
 
@@ -129,8 +131,8 @@ describe('API tests', () => {
                 });
         });
 
-        it('should has response with error validation driver_name is non empty string', (done) => {
-            let rideReq = Object.create(ride);
+        it('should has response with error validation if driver_name is empty string', (done) => {
+            var rideReq = Object.create(ride)
             rideReq.driver_name = ''
 
             request(app)
@@ -149,7 +151,7 @@ describe('API tests', () => {
                 });
         });
 
-        it('should has response with error validation driver_vehicle is non empty string', (done) => {
+        it('should has response with error validation if driver_vehicle is empty string', (done) => {
             let rideReq = Object.create(ride);
             rideReq.driver_vehicle = ''
 
@@ -166,6 +168,29 @@ describe('API tests', () => {
                     assert.equal(res.body.message, 'Rider name must be a non empty string');
 
                     done();
+                });
+        });
+
+        it('should has response with server error ', (done) => {
+            let rideReq = {
+                "rider_name": "test rider",
+                "driver_name": "test driver",
+                "driver_vehicle": "test vehicle"
+            }
+
+            request(app)
+                .post('/rides')
+                .send(rideReq)
+                .set('Content-Type', 'application/json')
+                .expect('Content-Type', /json/)
+                .expect(200)
+                .end((err, res) => {
+                    if (err) return done(err);
+
+                    assert.equal(res.body.error_code, 'SERVER_ERROR');
+                    assert.equal(res.body.message, 'Unknown error');
+
+                    done()
                 });
         });
     });
@@ -237,6 +262,21 @@ describe('API tests', () => {
 
                     assert.equal(res.body.error_code, 'RIDES_NOT_FOUND_ERROR');
                     assert.equal(res.body.message, 'Could not find any rides');
+
+                    done();
+                })
+        });
+
+        it('should has response with server error', (done) => {
+            request(app)
+                .get('/rides/?')
+                .expect('Content-Type', /json/)
+                .expect(200)
+                .end((err, res) => {
+                    if (err) return done(err);
+
+                    assert.equal(res.body.error_code, 'SERVER_ERROR');
+                    assert.equal(res.body.message, 'Unknown error');
 
                     done();
                 })
