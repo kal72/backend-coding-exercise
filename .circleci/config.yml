@@ -17,9 +17,6 @@ jobs:
       - store_test_results:
           path: test-results
       - store_artifacts:
-          path: coverage
-          destination: coverage
-      - store_artifacts:
           path: docs
           destination: docs
 orbs:
