@@ -7,7 +7,7 @@ const sqlite3 = require('sqlite3').verbose();
 const db = new sqlite3.Database(':memory:');
 
 const app = require('../src/app')(db);
-const buildSchemas = require('../src/schemas');
+const buildSchemas = require('../src/migration/schemas');
 const buildAsync = require('../src/lib/dbasync');
 
 const ride = {
@@ -18,7 +18,7 @@ const ride = {
     "rider_name": "test rider",
     "driver_name": "test driver",
     "driver_vehicle": "test vehicle"
-}
+};
 
 describe('API tests', () => {
     before((done) => {
@@ -234,6 +234,25 @@ describe('API tests', () => {
                     done();
                 });
         });
+
+        it('should has response with rider is not found', (done) => {
+            page = 5;
+            size = 10;
+
+            request(app)
+                .get('/rides')
+                .query({page: page, size: size})
+                .expect('Content-Type', /json/)
+                .expect(200)
+                .end((err, res) => {
+                    if (err) return done(err);
+
+                    assert.equal(res.body.error_code, 'RIDES_NOT_FOUND_ERROR');
+                    assert.equal(res.body.message, 'Could not find any rides');
+
+                    done();
+                });
+        });
     });
 
     describe('GET /rides/:id', () => {
@@ -245,8 +264,7 @@ describe('API tests', () => {
                 .end((err, res) => {
                     if (err) return done(err);
 
-                    let result = res.body[0];
-                    assert.equal(result.rideID, 1);
+                    assert.equal(res.body[0].rideID, 1);
 
                     done();
                 })
