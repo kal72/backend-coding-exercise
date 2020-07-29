@@ -1,4 +1,4 @@
-# Xendit Coding Exercise
+# Coding Exercise
 
 The goal of these exercises are to assess your proficiency in software engineering that is related to the daily work that we do at Xendit. Please follow the instructions below to complete the assessment.
 
@@ -103,5 +103,5 @@ Please implement load testing to ensure your service can handle a high amount of
     
 ## API Documentation
 
-See the documentation, please access this url ([kal72.github.io/backend-coding-test](https://kal72.github.io/backend-coding-test/))
+See the documentation, please access this url ([kal72.github.io/backend-coding-exercise](https://kal72.github.io/backend-coding-exercise/))
 
